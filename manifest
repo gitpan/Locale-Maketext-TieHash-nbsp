@@ -1,0 +1,7 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Locale-Maketext-TieHash-nbsp.t
+lib/Locale/Maketext/TieHash/nbsp.pm
+META.yml                                 Module meta-data (added by MakeMaker)
