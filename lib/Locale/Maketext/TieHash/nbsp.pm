@@ -5,28 +5,43 @@ use strict;
 use warnings;
 use Carp qw(croak);
 
-our $VERSION = '0.02';
+our $VERSION = '0.04';
 
 require Tie::Hash;
 our @ISA = qw(Tie::Hash);
 
 sub TIEHASH
-{ bless {
+{ my $self = bless {}, shift;
+  $self->Config(
     sub => sub {
       (local $_ = $_[0]) =~ s/ /&nbsp;/g;
       $_;
-    }
-  }, shift;
+    },
+    @_,
+  );
+  $self;
 }
 
-# Store your own subroutine.
+# configure
+sub Config {
+  # Object, Parameter Hash
+  my $self = shift;
+  while (@_) {
+    my ($key, $value) = (shift(), shift);
+    $key or croak 'key is not true';
+    $key eq 'sub' or croak "key is not 'sub'";
+    ref $value eq 'CODE' or croak 'Reference on CODE expects.';
+    $self->{$key} = $value;
+  }
+  defined wantarray or return;
+  %{$self};
+}
+
+# Store your own subroutine. (deprecated)
 sub STORE
 { # Object, Key, Value
   my ($self, $key, $value) = @_;
-  $key or croak 'key is not true';
-  $key eq 'sub' or croak "key is not 'sub'";
-  ref $value eq 'CODE' or croak 'Reference on CODE expects.';
-  $self->{$key} = $value;
+  $self->Config($key => $value);
 }
 
 # execute the sub
@@ -48,14 +63,24 @@ Locale::Maketext::TieHash::nbsp - Tying subroutine to a hash
 
  use strict;
  use Locale::Maketext::TieHash::nbsp;
- tie my %nbsp, 'Locale::Maketext::TieHash::nbsp';
+ tie my %nbsp, 'Locale::Maketext::TieHash::nbsp', %config;
  # print: "15&nbsp;pieces";
  print $nbsp{15 pieces};
  # If you want to test your Script, store you yours own test subroutine.
  # Substitute whitespace to a string which you see in the Browser.
- $nbsp{sub} = sub {
-   (local $_ = $_[1]) =~ s/ /<span style="color:red">§</span>/g;
- };
+ tied(%nbsp)->Config(
+   sub => sub {
+     (local $_ = $_[1]) =~ s/ /<span style="color:red">§</span>/g;
+   },
+ );
+
+=head2 read Configuration
+
+ my %config = tied(%nbsp)->Config();
+
+=head2 write Configuration
+
+ my %config = tied(%nbsp)->Config(sub => sub{yourcode});
 
 =head1 DESCRIPTION
 
@@ -76,7 +101,31 @@ Then submit a reference on an array as hash key.
 
 C<">TIEHASHC<"> ties your hash and set options defaults.
 
-=head2 STORE
+=head2 Config
+
+C<">ConfigC<"> stores your own subroutine.
+
+ tied(%nbsp)->Config(
+   sub => sub {   # this sub is the default
+     (local $_ = $_[0]) =~ s/ /&nbsp;/g;
+     $_;
+   },
+ );
+
+The method calls croak, if the key of your hash is undef or your key isn't correct
+and if the value, you set to key C<">subC<">, is not a reference of C<">CODEC<">.
+
+C<">ConfigC<"> accepts all parameters as Hash and gives a Hash back with all attitudes.
+
+=head2 FETCH
+
+Give your string as key of your hash.
+C<">FETCHC<"> will substitute the whitespace in C<">&nbsp;C<"> and give it back as value.
+
+ # Substitute
+ print $nbsp{$string};
+
+=head2 STORE (deprecated)
 
 C<">STOREC<"> stores your own subroutine.
 
@@ -86,15 +135,7 @@ C<">STOREC<"> stores your own subroutine.
  };
 
 The method calls croak, if the key of your hash is undef or your key isn't correct
-and if the value, you set to key C<">subC<">, is not a reference of C<">CODEC<">. 
-
-=head2 FETCH
-
-Give your string as key of your hash.
-C<">FETCHC<"> will substitute the whitespace in C<">&nbsp;C<"> and give it back as value.
-
- # Substitute
- print $nbsp{$string};
+and if the value, you set to key C<">subC<">, is not a reference of C<">CODEC<">.
 
 =head1 SEE ALSO
 

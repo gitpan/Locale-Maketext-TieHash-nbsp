@@ -7,3 +7,7 @@ Revision history for Perl extension Locale::Maketext::TieHash::nbsp.
 0.02  Sun Jan  9 21:45:01 2005
 	- only pod-documentation is expanded
 
+0.04  Sun Feb 13 14:55:00 2005
+	- new Method Config
+        - Method STORE deprecated
+
