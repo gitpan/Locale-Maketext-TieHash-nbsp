@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp qw(croak);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 require Tie::Hash;
 our @ISA = qw(Tie::Hash);
@@ -50,9 +50,9 @@ Locale::Maketext::TieHash::nbsp - Tying subroutine to a hash
  use Locale::Maketext::TieHash::nbsp;
  tie my %nbsp, 'Locale::Maketext::TieHash::nbsp';
  # print: "15&nbsp;pieces";
- print $nbsp{15 pices};
+ print $nbsp{15 pieces};
  # If you want to test your Script, store you yours own test subroutine.
- # Change Whitespace to a string which you see in the Browser.
+ # Substitute whitespace to a string which you see in the Browser.
  $nbsp{sub} = sub {
    (local $_ = $_[1]) =~ s/ /<span style="color:red">§</span>/g;
  };
@@ -67,7 +67,38 @@ At long last this is the same, only the notation is shorter.
 Sometimes the subroutine C<">subC<"> expects more than 1 parameter.
 Then submit a reference on an array as hash key.
 
+=head1 METHODS
+
+=head2 TIEHASH
+
+ use Locale::Maketext::TieHash::nbsp;
+ tie my %nbsp, 'Locale::Maketext::TieHash::nbsp';
+
+C<">TIEHASHC<"> ties your hash and set options defaults.
+
+=head2 STORE
+
+C<">STOREC<"> stores your own subroutine.
+
+ $nbsp{sub} = sub {   # this sub is the default
+   (local $_ = $_[0]) =~ s/ /&nbsp;/g;
+   $_;
+ };
+
+The method calls croak, if the key of your hash is undef or your key isn't correct
+and if the value, you set to key C<">subC<">, is not a reference of C<">CODEC<">. 
+
+=head2 FETCH
+
+Give your string as key of your hash.
+C<">FETCHC<"> will substitute the whitespace in C<">&nbsp;C<"> and give it back as value.
+
+ # Substitute
+ print $nbsp{$string};
+
 =head1 SEE ALSO
+
+Tie::Hash
 
 Locale::Maketext
 

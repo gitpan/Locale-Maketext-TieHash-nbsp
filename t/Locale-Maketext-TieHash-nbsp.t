@@ -8,13 +8,13 @@ use Locale::Maketext::TieHash::nbsp;
 tie my %nbsp, 'Locale::Maketext::TieHash::nbsp';
 print "# check transformation\n";
 ok '&nbsp;' eq $nbsp{' '};
-print "# change subroutine\n";
+print "# substitute subroutine\n";
 $nbsp{sub} = sub {
   my ($p1, $p2) = @_;
   "$p1$p2";
 };
 ok 1;
-print "# check changed subroutine\n";
+print "# check substituted subroutine\n";
 ok $nbsp{[1,2]} eq '12';
 print "# initiating dying by storing wrong reference\n";
 { eval { no warnings; $nbsp{undef()} = undef };
