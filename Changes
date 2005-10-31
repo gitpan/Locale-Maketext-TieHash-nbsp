@@ -11,3 +11,8 @@ Revision history for Perl extension Locale::Maketext::TieHash::nbsp.
 	- new Method Config
         - Method STORE deprecated
 
+0.05  Mon Oct 31 22:35:00 2005
+	- error in README fixed
+        - but README is going to readme always, a WINDOWS bug 
+
+

@@ -1,4 +1,4 @@
-Locale-Maketext-TieHash-nbsp version 0.02
+Locale-Maketext-TieHash-nbsp version 0.05
 =========================================
 
 Subroutines don't have interpreted into strings.
@@ -20,7 +20,7 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  Charp
+  Carp
   Tie::Hash
   Locale::Maketext
 

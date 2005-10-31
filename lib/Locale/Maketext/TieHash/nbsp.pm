@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp qw(croak);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 require Tie::Hash;
 our @ISA = qw(Tie::Hash);
