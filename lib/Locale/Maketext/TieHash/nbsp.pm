@@ -1,86 +1,148 @@
-package Locale::Maketext::TieHash::nbsp;
+package Locale::Maketext::TieHash::nbsp; ## no critic (Capitalization)
 
-use 5.006001;
 use strict;
 use warnings;
-use Carp qw(croak);
 
-our $VERSION = '0.05';
+our $VERSION = '1.00';
 
-require Tie::Hash;
-our @ISA = qw(Tie::Hash);
+use parent qw(Tie::Sub);
 
-sub TIEHASH
-{ my $self = bless {}, shift;
-  $self->Config(
-    sub => sub {
-      (local $_ = $_[0]) =~ s/ /&nbsp;/g;
-      $_;
-    },
-    @_,
-  );
-  $self;
+use Params::Validate qw(:all);
+
+my $get_substitute_sub = sub {
+    my $separator = shift || '&nbsp;';
+
+    return sub {
+        (my $string = shift) =~ s{ }{$separator}msg;
+        return $string;
+    };
+};
+
+## no critic (ArgUnpacking)
+
+sub TIEHASH {
+    my ($class, %init) = validate_pos(
+        @_,
+        {type => SCALAR},
+        ( ({type => SCALAR}, 1) x ((@_ - 1) / 2) ),
+    );
+
+    my $self = $class->SUPER::TIEHASH( $get_substitute_sub->() );
+    $self->config(%init);
+
+    return $self;
 }
 
-# configure
-sub Config {
-  # Object, Parameter Hash
-  my $self = shift;
-  while (@_) {
-    my ($key, $value) = (shift(), shift);
-    $key or croak 'key is not true';
-    $key eq 'sub' or croak "key is not 'sub'";
-    ref $value eq 'CODE' or croak 'Reference on CODE expects.';
-    $self->{$key} = $value;
-  }
-  defined wantarray or return;
-  %{$self};
+sub config {
+    return shift->SUPER::config(@_) if caller eq 'Tie::Sub';
+    # object, hash
+    my ($self, %init) = validate_pos(
+        @_,
+        {isa => __PACKAGE__},
+        ( ({type => SCALAR}, 1) x ((@_ - 1) / 2) ),
+    );
+    validate_with(
+        params => \%init,
+        spec   => {
+            sub       => {
+                type      => CODEREF,
+                optional  => 1,
+                callbacks => {
+                    separator_not_exists => sub {
+                        return ! defined $init{separator};
+                    },
+                },
+            },
+            separator => {
+                type      => SCALAR,
+                optional  => 1,
+                callbacks => {
+                    sub_not_exists => sub {
+                        return ! defined $init{sub};
+                    },
+                },
+            },
+        },
+        called => 'the config hash',
+    );
+
+    if (exists $init{sub}) {
+        return $self->SUPER::config( $init{sub} );
+    }
+    if (exists $init{separator}) {
+        return $self->SUPER::config(
+            $get_substitute_sub->( $init{separator} )
+        );
+    }
+
+    return;
 }
 
-# Store your own subroutine. (deprecated)
-sub STORE
-{ # Object, Key, Value
-  my ($self, $key, $value) = @_;
-  $self->Config($key => $value);
-}
-
-# execute the sub
-sub FETCH
-{ # Object, Key
-  my ($self, $key) = @_;
-  # Several parameters to sub will submit as reference on an array.
-  $self->{sub}->(ref $key eq 'ARRAY' ? @{$key} : $key);
-}
+# $Id$
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 
 Locale::Maketext::TieHash::nbsp - Tying subroutine to a hash
 
+=head1 VERSION
+
+1.00
+
 =head1 SYNOPSIS
 
- use strict;
- use Locale::Maketext::TieHash::nbsp;
- tie my %nbsp, 'Locale::Maketext::TieHash::nbsp', %config;
- # print: "15&nbsp;pieces";
- print $nbsp{15 pieces};
- # If you want to test your Script, store you yours own test subroutine.
- # Substitute whitespace to a string which you see in the Browser.
- tied(%nbsp)->Config(
-   sub => sub {
-     (local $_ = $_[1]) =~ s/ /<span style="color:red">§</span>/g;
-   },
- );
+    use strict;
+    use warnings;
 
-=head2 read Configuration
+    use Locale::Maketext::TieHash::nbsp;
 
- my %config = tied(%nbsp)->Config();
+=head2 without a special configuration (using entities)
 
-=head2 write Configuration
+    tie my %nbsp, 'Locale::Maketext::TieHash::nbsp';
+    print $nbsp{'15 pieces'};
+    # result: '15&nbsp;pieces'
 
- my %config = tied(%nbsp)->Config(sub => sub{yourcode});
+=head2 configuration of unicode separator string
+
+    use charnames qw(:full);
+
+    tie my %nbsp, 'Locale::Maketext::TieHash::nbsp', separator => "\N{NO-BREAK SPACE}";
+    print $nbsp{'15 pieces'};
+    # result is eq "15\N{NO-BREAK SPACE}pieces"
+
+=head2 configuration of visible string
+
+To test the script, store an visible string.
+
+    tie my %nbsp, 'Locale::Maketext::TieHash::nbsp', separator => '~';
+    print $nbsp{'15 pieces'};
+    # result: '15~pieces'
+
+=head2 configuration using a subroutine
+
+    tie my %nbsp, 'Locale::Maketext::TieHash::nbsp', sub {
+        (my $string = shift) =~ s{ }{*}msg;
+        return $string;
+    };
+    print $nbsp{'15 pieces'};
+    # result: '15*pieces'
+
+=head2 read configuration
+
+    my %config = tied(%nbsp)->config();
+
+=head2 write configuration
+
+    my %config = tied(%nbsp)->config(separator => $separator);
+
+or
+
+    my %config = tied(%nbsp)->config(sub => $code_ref);
 
 =head1 DESCRIPTION
 
@@ -89,74 +151,88 @@ The module ties a subroutine to a hash.
 The Subroutine is executed at fetch hash.
 At long last this is the same, only the notation is shorter.
 
-Sometimes the subroutine C<">subC<"> expects more than 1 parameter.
+Sometimes the subroutine 'sub' expects more than 1 parameter.
 Then submit a reference on an array as hash key.
 
-=head1 METHODS
+=head1 SUBROUTINES/METHODS
 
-=head2 TIEHASH
+=head2 method TIEHASH
 
- use Locale::Maketext::TieHash::nbsp;
- tie my %nbsp, 'Locale::Maketext::TieHash::nbsp';
+    tie my %nbsp, 'Locale::Maketext::TieHash::nbsp';
 
-C<">TIEHASHC<"> ties your hash and set options defaults.
+'TIEHASH' ties your hash and set the options defaults.
 
-=head2 Config
+=head2 method config
 
-C<">ConfigC<"> stores your own subroutine.
+Stores the seperator string or a subroutine.
 
- tied(%nbsp)->Config(
-   sub => sub {   # this sub is the default
-     (local $_ = $_[0]) =~ s/ /&nbsp;/g;
-     $_;
-   },
- );
+    tied(%nbsp)->config(
+        sub => sub {
+            (my $string = shift) =~ s{ }{&nbsp;}msg;
+            return $string;
+        },
+    );
 
-The method calls croak, if the key of your hash is undef or your key isn't correct
-and if the value, you set to key C<">subC<">, is not a reference of C<">CODEC<">.
+or
 
-C<">ConfigC<"> accepts all parameters as Hash and gives a Hash back with all attitudes.
+    tied(%nbsp)->config(
+        separator => '&nbsp;',
+    );
 
-=head2 FETCH
+'config' accepts all parameters as Hash
+and gives a Hash back with all set attributes.
+
+=head2 method FETCH
 
 Give your string as key of your hash.
-C<">FETCHC<"> will substitute the whitespace in C<">&nbsp;C<"> and give it back as value.
+'FETCH' will substitute the whitespace to '&nbsp;' and give it back as value.
 
- # Substitute
- print $nbsp{$string};
+    # Substitute
+    print $nbsp{$string};
 
-=head2 STORE (deprecated)
+=head1 DIAGNOSTICS
 
-C<">STOREC<"> stores your own subroutine.
+All methods can croak at false parameters.
 
- $nbsp{sub} = sub {   # this sub is the default
-   (local $_ = $_[0]) =~ s/ /&nbsp;/g;
-   $_;
- };
+=head1 CONFIGURATION AND ENVIRONMENT
 
-The method calls croak, if the key of your hash is undef or your key isn't correct
-and if the value, you set to key C<">subC<">, is not a reference of C<">CODEC<">.
+nothing
+
+=head1 DEPENDENCIES
+
+parent
+
+L<Tie::Sub>
+
+L<Params::Validate> Comfortable parameter validation
+
+=head1 INCOMPATIBILITIES
+
+not known
+
+=head1 BUGS AND LIMITATIONS
+
+not known
 
 =head1 SEE ALSO
 
-Tie::Hash
+L<Locale::Maketext> Localisation framework
 
-Locale::Maketext
-
-Locale::Maketext::TieHash::L10N
-
-Locale::Maketext::TieHash::quant
+L<Tie::Hash>
 
 =head1 AUTHOR
 
-Steffen Winkler, E<lt>cpan@steffen-winkler.deE<gt>
+Steffen Winkler
 
-=head1 COPYRIGHT AND LICENSE
+=head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2004, 2005 by Steffen Winkler
+Copyright (c) 2004 - 2009,
+Steffen Winkler
+C<< <steffenw at cpan.org> >>.
+All rights reserved.
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.6.1 or,
-at your option, any later version of Perl 5 you may have available.
+This module is free software;
+you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut

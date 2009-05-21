@@ -1,7 +1,12 @@
+Build.PL
 Changes
-Makefile.PL
-MANIFEST
-README
-t/Locale-Maketext-TieHash-nbsp.t
 lib/Locale/Maketext/TieHash/nbsp.pm
-META.yml                                 Module meta-data (added by MakeMaker)
+MANIFEST			This list of files
+README
+t/01_basics.t
+t/chars.t
+t/perl_critic.t
+t/pod.t
+t/pod_coverage.t
+Makefile.PL
+META.yml

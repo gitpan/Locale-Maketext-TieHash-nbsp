@@ -1,11 +1,29 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Locale-Maketext-TieHash-nbsp
-version:      0.05
-version_from: lib/Locale/Maketext/TieHash/nbsp.pm
-installdirs:  site
+---
+name: Locale-Maketext-TieHash-nbsp
+version: 1.00
+author:
+  - 'Steffen Winkler <steffenw@cpan.org>'
+abstract: Tying subroutine to a hash
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
 requires:
-    Test::Simple:                  0.46
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.17
+  Params::Validate: 0
+  Tie::Sub: 0.07
+  parent: 0
+build_requires:
+  Test::Exception: 0
+  Test::More: 0
+  Test::NoWarnings: 0
+recommends:
+  Test::More: 0
+  Test::Pod: 1.14
+  Test::Pod::Coverage: 1.04
+provides:
+  Locale::Maketext::TieHash::nbsp:
+    file: lib/Locale/Maketext/TieHash/nbsp.pm
+    version: 1.00
+generated_by: Module::Build version 0.33
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
