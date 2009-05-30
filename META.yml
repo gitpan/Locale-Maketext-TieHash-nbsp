@@ -1,8 +1,8 @@
 ---
 name: Locale-Maketext-TieHash-nbsp
-version: 1.00
+version: 1.01
 author:
-  - 'Steffen Winkler <steffenw@cpan.org>'
+  - 'Steffen Winkler <steffenw at cpan.org>'
 abstract: Tying subroutine to a hash
 license: perl
 resources:
@@ -11,10 +11,11 @@ requires:
   Params::Validate: 0
   Tie::Sub: 0.07
   parent: 0
+  perl: 5.006001
 build_requires:
   Test::Exception: 0
-  Test::More: 0
   Test::NoWarnings: 0
+  Test::Simple: 0
 recommends:
   Test::More: 0
   Test::Pod: 1.14
@@ -22,7 +23,7 @@ recommends:
 provides:
   Locale::Maketext::TieHash::nbsp:
     file: lib/Locale/Maketext/TieHash/nbsp.pm
-    version: 1.00
+    version: 1.01
 generated_by: Module::Build version 0.33
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html

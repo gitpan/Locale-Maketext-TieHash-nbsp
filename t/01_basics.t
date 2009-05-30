@@ -2,8 +2,8 @@ use strict;
 use warnings;
 
 use Test::More tests => 11 + 1;
-use Test::Exception;
 use Test::NoWarnings;
+use Test::Exception;
 
 BEGIN { use_ok('Locale::Maketext::TieHash::nbsp') };
 

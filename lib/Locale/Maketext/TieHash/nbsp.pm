@@ -3,7 +3,7 @@ package Locale::Maketext::TieHash::nbsp; ## no critic (Capitalization)
 use strict;
 use warnings;
 
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 use parent qw(Tie::Sub);
 
@@ -92,7 +92,7 @@ Locale::Maketext::TieHash::nbsp - Tying subroutine to a hash
 
 =head1 VERSION
 
-1.00
+1.01
 
 =head1 SYNOPSIS
 
@@ -119,30 +119,26 @@ Locale::Maketext::TieHash::nbsp - Tying subroutine to a hash
 
 To test the script, store an visible string.
 
-    tie my %nbsp, 'Locale::Maketext::TieHash::nbsp', separator => '~';
+    tie my %nbsp, 'Locale::Maketext::TieHash::nbsp', separator => q{~};
     print $nbsp{'15 pieces'};
     # result: '15~pieces'
 
 =head2 configuration using a subroutine
 
-    tie my %nbsp, 'Locale::Maketext::TieHash::nbsp', sub {
+    tie my %nbsp, 'Locale::Maketext::TieHash::nbsp', sub => sub {
         (my $string = shift) =~ s{ }{*}msg;
         return $string;
     };
     print $nbsp{'15 pieces'};
     # result: '15*pieces'
 
-=head2 read configuration
+=head2 write/read configuration
 
-    my %config = tied(%nbsp)->config();
-
-=head2 write configuration
-
-    my %config = tied(%nbsp)->config(separator => $separator);
+    my $former_code_ref = tied(%nbsp)->config(separator => $separator);
 
 or
 
-    my %config = tied(%nbsp)->config(sub => $code_ref);
+    my $former_code_ref = tied(%nbsp)->config(sub => $new_code_ref);
 
 =head1 DESCRIPTION
 

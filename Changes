@@ -1,23 +1,26 @@
 Revision history for Perl extension Locale::Maketext::TieHash::nbsp.
 
+1.01  Sat May 30 09:00:00 2009
+- bugfix build dependencies
+- add examples
 
 1.00  Thu May 21 16:00:00 2009
-    - changed config API
+- changed config API
 
 0.06  Mon Mar 24 23:50:33 2008
-    - Build.pl
+- Build.pl
 
 0.05  Mon Oct 31 22:35:00 2005
-    - error in README fixed
-    - but README is going to readme always, a WINDOWS bug 
+- error in README fixed
+- but README is going to readme always, a WINDOWS bug 
 
 0.04  Sun Feb 13 14:55:00 2005
-    - new Method Config
-    - Method STORE deprecated
+- new Method Config
+- Method STORE deprecated
 
 0.02  Sun Jan  9 21:45:01 2005
-    - only pod-documentation is expanded
+- only pod-documentation is expanded
 
 0.01  Fri Dec 31 08:27:13 2004
-    - original version; created by h2xs 1.23 with options
-        -XA -n Locale::Maketext::TieHash::nbsp
+- original version; created by h2xs 1.23 with options
+  -XA -n Locale::Maketext::TieHash::nbsp

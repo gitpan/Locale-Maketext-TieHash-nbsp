@@ -1,5 +1,10 @@
 Build.PL
 Changes
+example/01_using_entities.pl
+example/02_unicode_separator_string.pl
+example/03_visible_string.pl
+example/04_using_subroutine.pl
+example/05_write_read_config.pl
 lib/Locale/Maketext/TieHash/nbsp.pm
 MANIFEST			This list of files
 README
@@ -8,5 +13,6 @@ t/chars.t
 t/perl_critic.t
 t/pod.t
 t/pod_coverage.t
+t/prereq_build.t
 Makefile.PL
 META.yml
