@@ -3,7 +3,7 @@ package Locale::Maketext::TieHash::nbsp; ## no critic (Capitalization)
 use strict;
 use warnings;
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 use parent qw(Tie::Sub);
 
@@ -92,7 +92,7 @@ Locale::Maketext::TieHash::nbsp - Tying subroutine to a hash
 
 =head1 VERSION
 
-1.01
+1.02
 
 =head1 SYNOPSIS
 
@@ -139,6 +139,11 @@ To test the script, store an visible string.
 or
 
     my $former_code_ref = tied(%nbsp)->config(sub => $new_code_ref);
+
+=head1 EXAMPLE
+
+Inside of this Distribution is a directory named example.
+Run this *.pl files.
 
 =head1 DESCRIPTION
 

@@ -1,6 +1,6 @@
 ---
 name: Locale-Maketext-TieHash-nbsp
-version: 1.01
+version: 1.02
 author:
   - 'Steffen Winkler <steffenw at cpan.org>'
 abstract: Tying subroutine to a hash
@@ -23,7 +23,7 @@ recommends:
 provides:
   Locale::Maketext::TieHash::nbsp:
     file: lib/Locale/Maketext/TieHash/nbsp.pm
-    version: 1.01
+    version: 1.02
 generated_by: Module::Build version 0.33
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
